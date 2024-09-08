@@ -1,0 +1,19 @@
+import { FindManyOptions, QueryRunner } from 'typeorm';
+import { ID } from '../app/types/types.types';
+
+/**
+ * @param E Model Entity
+ */
+export interface IGenericRepository<E = any> {
+  listEntities(opt?: FindManyOptions<E>, query?: QueryRunner): Promise<E[]>;
+  listEntitiesAndCount(query?: QueryRunner): Promise<[E[], number]>;
+  findOneEntity(id: ID, opt?: FindManyOptions<E>, query?: QueryRunner): Promise<E>;
+  saveEntity(entity: E, query?: QueryRunner): Promise<E>;
+  updateEntity(entity: E, query?: QueryRunner): Promise<E>;
+  deleteEntity(id: ID, query?: QueryRunner): Promise<E>;
+  softDeleteEntity(id: ID, query?: QueryRunner): Promise<E>;
+  createAndStartTransaction(): Promise<QueryRunner>;
+  commitTransaction(query: QueryRunner): Promise<void>;
+  rollbackTransaction(query: QueryRunner): Promise<void>;
+  releaseTransaction(query: QueryRunner): Promise<void>;
+}
