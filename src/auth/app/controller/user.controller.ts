@@ -1,6 +1,6 @@
 // Dependencies
 import { ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Controller, Delete, Get, HttpStatus, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Put } from '@nestjs/common';
 
 // Service
 import { UserService } from '@auth/domain/service/user.service';
@@ -21,6 +21,7 @@ import { UUID } from '@shared/app/types/types.types';
 
 // Constants
 import { Routes } from '@shared/app/routes/routes.constants';
+import { UserDto } from '../dto/user.dto';
 
 @ApiExtraModels(UserApi)
 @ApiTags(Routes.User.ApiTags)
@@ -38,9 +39,17 @@ export class UserController {
 
   @Get(Routes.User.Detail)
   @ApiJsonResponse({ status: HttpStatus.OK, type: [UserApi] })
-  @ApiOperation({ summary: 'View all users registered in the application', description: 'all users registered in the app' })
+  @ApiOperation({ summary: 'get the detail of the user', description: 'get the detail of the user' })
   async detail(@Param('id') id: UUID): Promise<JsonResponse<UserApi>> {
     const data = await this.authService.detailUser(id);
+    return new JsonResponse<UserApi>({ data });
+  }
+
+  @Put(Routes.User.Update)
+  @ApiJsonResponse({ status: HttpStatus.OK, type: [UserApi] })
+  @ApiOperation({ summary: 'Update any user', description: 'Update any user' })
+  async update(@Body() dto: UserDto): Promise<JsonResponse<UserApi>> {
+    const data = await this.authService.updateUser(dto);
     return new JsonResponse<UserApi>({ data });
   }
 

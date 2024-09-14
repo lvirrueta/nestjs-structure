@@ -2,7 +2,7 @@
 const List = 'get';
 const Detail = 'detail/:id';
 // const Create = 'create';
-// const Update = 'update';
+const Update = 'update';
 const Delete = 'delete/:id';
 
 export const Routes = {
@@ -25,7 +25,7 @@ export const Routes = {
     // Search,
     Detail,
     // Create,
-    // Update,
+    Update,
     Delete,
   },
 };
