@@ -6,8 +6,8 @@
 // const Delete = 'delete/:id';
 
 export const Routes = {
-  auth: {
-    ApiTags: `auth`,
+  Auth: {
+    ApiTags: `Auth`,
     Controller: `auth`,
     // List,
     // Search,
