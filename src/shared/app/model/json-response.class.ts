@@ -6,15 +6,15 @@ export class JsonResponse<T> {
   private data: T;
   private message: string;
   private created: Date;
-  private code: string;
+  private statusCode: string;
 
   constructor(obj: IJsonResponse) {
-    const { succeed, data, message, code } = obj;
+    const { succeed, data, message, statusCode } = obj;
     this.succeed = succeed !== undefined ? succeed : true;
     this.created = new Date();
     this.message = message;
     this.data = data as T;
-    this.code = code;
+    this.statusCode = statusCode;
   }
 }
 
@@ -22,5 +22,5 @@ export interface IJsonResponse {
   succeed?: boolean;
   data: unknown;
   message?: string;
-  code?: string;
+  statusCode?: string;
 }
