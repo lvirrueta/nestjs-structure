@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ID } from 'src/shared/app/types/types.types';
-import { IGenericRepository } from 'src/shared/domain/i-generic-repository.interface';
+import { IGenericRepository } from 'src/shared/domain/irepositories/i-generic-repository.interface';
 import { Repository, DataSource, EntityTarget, QueryRunner, FindManyOptions } from 'typeorm';
+import { RepositoryOptions } from '../interface/options-generic.interface';
+import { NotFoundException } from '@nestjs/common';
 
 export abstract class GenericRepository<E> extends Repository<E> implements IGenericRepository<E> {
   constructor(
@@ -36,41 +38,69 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
   }
 
   /** save Entity */
-  public async saveEntity(entity: E, query?: QueryRunner): Promise<E> {
-    const repository = this.getSimpleOrTransaction(query);
+  public async saveEntity(entity: E, options?: RepositoryOptions): Promise<E> {
+    const { handleError = false, queryRunner } = { ...options };
 
-    return await repository.save(entity);
+    const repository = this.getSimpleOrTransaction(queryRunner);
+
+    try {
+      return await repository.save(entity);
+    } catch (e) {
+      if (handleError) throw e;
+      this.catchExceptions(e);
+    }
   }
 
   /** update Entity */
-  public async updateEntity(entity: E, query?: QueryRunner): Promise<E> {
-    const repository = this.getSimpleOrTransaction(query);
+  public async updateEntity(entity: E, options?: RepositoryOptions): Promise<E> {
+    const { handleError = false, queryRunner } = { ...options };
+
+    const repository = this.getSimpleOrTransaction(queryRunner);
 
     const entityF = await repository.findOne({ where: { id: entity['id'] } as any });
     // if (!entityF) ThrowError.httpException(Errors.GenericRepository.UpdateEntity);
 
-    return await repository.save(entity);
+    try {
+      return await repository.save(entity);
+    } catch (e) {
+      if (handleError) throw e;
+      this.catchExceptions(e);
+    }
   }
 
   /** delete entity */
-  public async deleteEntity(id: ID, query?: QueryRunner): Promise<E> {
-    const repository = this.getSimpleOrTransaction(query);
+  public async deleteEntity(id: ID, options?: RepositoryOptions): Promise<E> {
+    const { handleError = false, queryRunner } = { ...options };
+
+    const repository = this.getSimpleOrTransaction(queryRunner);
 
     const entityF = await repository.findOne({ where: { id } as any });
     // if (!entityF) ThrowError.httpException(Errors.GenericRepository.DeleteEntity);
 
-    return await repository.remove(entityF);
+    try {
+      return await repository.remove(entityF);
+    } catch (error) {
+      if (handleError === false) throw error;
+      this.catchExceptions(error);
+    }
   }
 
   /** soft delete entity */
-  public async softDeleteEntity(id: ID, query?: QueryRunner): Promise<E> {
-    const repository = this.getSimpleOrTransaction(query);
+  public async softDeleteEntity(id: ID, options?: RepositoryOptions): Promise<E> {
+    const { handleError = false, queryRunner } = { ...options };
+
+    const repository = this.getSimpleOrTransaction(queryRunner);
 
     const entityF = await repository.findOne({ where: { id } as any });
     // if (!entityF) ThrowError.httpException(Errors.GenericRepository.DeleteEntity);
 
-    await repository.softDelete(id);
-    return entityF;
+    try {
+      await repository.softDelete(id);
+      return entityF;
+    } catch (error) {
+      if (handleError === false) throw error;
+      this.catchExceptions(error);
+    }
   }
 
   /** create and start transaction */
@@ -100,5 +130,38 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
   /** get queryRunner repository or a simple repository */
   protected getSimpleOrTransaction(query?: QueryRunner) {
     return query ? query.manager.getRepository(this.target) : this.dataSource.getRepository(this.target);
+  }
+
+  /** Catch Generic Exceptions */
+  private catchExceptions(error): void {
+    const code = error['code'];
+    const detail = error['detail'] as string;
+    const value = (detail?.split('=')[1] || '')?.match(/\(([^)]+)\)/);
+    switch (code) {
+      case '23503':
+        throw new NotFoundException({
+          message: `entity ${value[1]} not found`,
+          friendlyMessage: `la entidad ${value[1]} no fue encontrada`,
+        });
+        break;
+
+      case '23505':
+        throw new NotFoundException({
+          message: `key ${value[0]} alredy exists`,
+          friendlyMessage: `campo ${value[0]} ya existe`,
+        });
+        break;
+
+      case '23502':
+        throw new NotFoundException({
+          message: `not null values`,
+          friendlyMessage: `no puede haber valores vacíos`,
+        });
+        break;
+
+      default:
+        throw error;
+        break;
+    }
   }
 }
