@@ -39,21 +39,21 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
 
   /** save Entity */
   public async saveEntity(entity: E, options?: RepositoryOptions): Promise<E> {
-    const { handleError = false, queryRunner } = { ...options };
+    const { handleError = true, queryRunner } = { ...options };
 
     const repository = this.getSimpleOrTransaction(queryRunner);
 
     try {
       return await repository.save(entity);
     } catch (e) {
-      if (handleError) throw e;
+      if (!handleError) throw e;
       this.catchExceptions(e);
     }
   }
 
   /** update Entity */
   public async updateEntity(entity: E, options?: RepositoryOptions): Promise<E> {
-    const { handleError = false, queryRunner } = { ...options };
+    const { handleError = true, queryRunner } = { ...options };
 
     const repository = this.getSimpleOrTransaction(queryRunner);
 
@@ -63,14 +63,14 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     try {
       return await repository.save(entity);
     } catch (e) {
-      if (handleError) throw e;
+      if (!handleError) throw e;
       this.catchExceptions(e);
     }
   }
 
   /** delete entity */
   public async deleteEntity(id: ID, options?: RepositoryOptions): Promise<E> {
-    const { handleError = false, queryRunner } = { ...options };
+    const { handleError = true, queryRunner } = { ...options };
 
     const repository = this.getSimpleOrTransaction(queryRunner);
 
@@ -87,7 +87,7 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
 
   /** soft delete entity */
   public async softDeleteEntity(id: ID, options?: RepositoryOptions): Promise<E> {
-    const { handleError = false, queryRunner } = { ...options };
+    const { handleError = true, queryRunner } = { ...options };
 
     const repository = this.getSimpleOrTransaction(queryRunner);
 
