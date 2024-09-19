@@ -37,6 +37,10 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     return await repository.findOne({ where });
   }
 
+  instanceEntity(e: E): E {
+    return this.create(e);
+  }
+
   /** save Entity */
   public async saveEntity(entity: E, options?: RepositoryOptions): Promise<E> {
     const { handleError = true, queryRunner } = { ...options };
