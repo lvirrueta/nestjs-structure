@@ -1,9 +1,13 @@
-import { IUser } from 'src/auth/domain/interface/i-user';
+import { Column, Entity, PrimaryGeneratedColumn, TableInheritance } from 'typeorm';
 import { ID } from 'src/shared/app/types/types.types';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { IUser } from 'src/auth/domain/interface/i-user';
+import { UserTypeEnum } from '@auth/domain/enum/user.enum';
 
 @Entity({ name: 'tblUsers' })
-export class UserEntity implements IUser {
+@TableInheritance({
+  column: { type: 'enum', enum: UserTypeEnum, enumName: 'User_entType', name: 'User_entType' },
+})
+export abstract class UserEntity implements IUser {
   constructor(dto?: IUser) {
     const { password, username } = { ...dto };
     this.password = password;
