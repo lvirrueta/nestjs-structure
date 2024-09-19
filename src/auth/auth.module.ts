@@ -10,10 +10,15 @@ import { UserController } from './app/controller/user.controller';
 
 // Services
 import { AuthService } from './domain/service/auth.service';
-import { UserService } from './domain/service/user.service';
+import { UserAdminService, UserCustomerService, UserOperativeService, UserService } from './domain/service/user.service';
 
 // Repositories
-import { UserRepository } from './infrastructure/repositories/user.repository';
+import {
+  UserRepository,
+  UserAdminRepository,
+  UserCustomerRepository,
+  UserOperativeRepository,
+} from './infrastructure/repositories/user.repository';
 
 // Strategies
 import { JwtStrategy } from './app/strategies/jwt-strategy';
@@ -32,7 +37,23 @@ import { JwtStrategy } from './app/strategies/jwt-strategy';
     }),
   ],
   controllers: [AuthController, UserController],
-  providers: [AuthService, UserService, UserRepository, JwtStrategy],
+  providers: [
+    // Providers
+    JwtStrategy,
+
+    // Services
+    AuthService,
+    UserService,
+    UserAdminService,
+    UserCustomerService,
+    UserOperativeService,
+
+    // Repositories
+    UserRepository,
+    UserAdminRepository,
+    UserCustomerRepository,
+    UserOperativeRepository,
+  ],
   exports: [JwtStrategy, JwtModule],
 })
 export class AuthModule {}

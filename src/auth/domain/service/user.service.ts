@@ -31,6 +31,12 @@ import {
 // Types
 import { ID } from '@shared/app/types/types.types';
 
+// Constants
+import { Errors } from '@shared/app/error/error.constants';
+
+// Utilities
+import { ThrowError } from '@shared/app/utils/throw-error';
+
 export abstract class UserAbstractService<E extends UserEntity, R extends IUserAbstractRepository<E>> {
   constructor(public readonly userRepository: R) {}
 
@@ -44,14 +50,26 @@ export abstract class UserAbstractService<E extends UserEntity, R extends IUserA
     return await this.userRepository.findOneEntity(id);
   }
 
+  /** Get One User by username*/
+  public async findByUsername(username: string): Promise<E> {
+    return await this.userRepository.findByUsername(username);
+  }
+
   /** Create One User */
   public async createUser(dto: UserDto): Promise<E> {
     const { password } = dto;
 
     dto.password = await this.hashPassword(password);
-    const e = this.userRepository.instanceEntity(dto);
+    const user = this.userRepository.instanceEntity(dto);
 
-    return await this.userRepository.saveEntity(e);
+    try {
+      return await this.userRepository.saveEntity(user, { handleError: false });
+    } catch (e) {
+      if (e?.code === '23505') {
+        ThrowError.httpException(Errors.Auth.UserRegistered);
+      }
+      throw e;
+    }
   }
 
   /** Update One User */
