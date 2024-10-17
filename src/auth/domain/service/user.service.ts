@@ -17,7 +17,8 @@ import { UserCustomerEntity } from '@auth/infrastructure/entities/user/user-cust
 import { UserOperativeEntity } from '@auth/infrastructure/entities/user/user-operative.entity';
 
 // Dto
-import { UserDto } from '@auth/app/dto/user.dto';
+import { CreateUserDto } from '@auth/app/dto/create-user.dto';
+import { UpdateUserDto } from '@auth/app/dto/update-user.dto';
 
 // Interface
 import {
@@ -56,7 +57,7 @@ export abstract class UserAbstractService<E extends UserEntity, R extends IUserA
   }
 
   /** Create One User */
-  public async createUser(dto: UserDto): Promise<E> {
+  public async createUser(dto: CreateUserDto): Promise<E> {
     const { password } = dto;
 
     dto.password = await this.hashPassword(password);
@@ -73,14 +74,13 @@ export abstract class UserAbstractService<E extends UserEntity, R extends IUserA
   }
 
   /** Update One User */
-  public async updateUser(dto: UserDto): Promise<E> {
-    const { id, password } = dto;
-    const userBD = await this.userRepository.findOneEntity(id);
+  public async updateUser(dto: UpdateUserDto): Promise<E> {
+    const { password } = dto;
 
-    if (!userBD) return;
-    userBD.password = await this.hashPassword(password);
+    dto.password = await this.hashPassword(password);
+    const user = this.userRepository.instanceEntity(dto);
 
-    return await this.userRepository.updateEntity(userBD);
+    return await this.userRepository.updateEntity(user);
   }
 
   /** Delete One User */
