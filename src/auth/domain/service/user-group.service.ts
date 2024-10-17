@@ -19,32 +19,32 @@ import { ID } from '@shared/app/types/types.types';
 
 @Injectable()
 export class UserGroupService {
-  constructor(@Inject(UserGroupRepository) public readonly userRepository: IUserGroupRepository) {}
+  constructor(@Inject(UserGroupRepository) public readonly userGroupRepository: IUserGroupRepository) {}
 
   /** Get All UserGroups */
   public async getUserGroups(): Promise<UserGroupEntity[]> {
-    return await this.userRepository.listEntities();
+    return await this.userGroupRepository.listEntities();
   }
 
   /** Get One UserGroup*/
   public async detailUserGroup(id: ID): Promise<UserGroupEntity> {
-    return await this.userRepository.findOneEntity(id);
+    return await this.userGroupRepository.findOneEntity(id);
   }
 
   /** Create One UserGroup */
   public async createUserGroup(dto: CreateUserGroupDto): Promise<UserGroupEntity> {
-    const user = this.userRepository.instanceEntity(dto);
-    return await this.userRepository.saveEntity(user);
+    const user = this.userGroupRepository.instanceEntity(dto);
+    return await this.userGroupRepository.saveEntity(user);
   }
 
   /** Update One UserGroup */
   public async updateUserGroup(dto: UpdateUserGroupDto): Promise<UserGroupEntity> {
-    const user = this.userRepository.instanceEntity(dto);
-    return await this.userRepository.updateEntity(user);
+    const user = this.userGroupRepository.instanceEntity(dto);
+    return await this.userGroupRepository.updateEntity(user);
   }
 
   /** Delete One UserGroup */
   public async deleteUserGroup(id: ID): Promise<UserGroupEntity> {
-    return await this.userRepository.deleteEntity(id);
+    return await this.userGroupRepository.deleteEntity(id);
   }
 }

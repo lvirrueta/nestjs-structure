@@ -28,4 +28,15 @@ export const Routes = {
     Update,
     Delete,
   },
+
+  UserGroup: {
+    ApiTags: `UserGroup`,
+    Controller: `user-group`,
+    List,
+    // Search,
+    Detail,
+    Create,
+    Update,
+    Delete,
+  },
 };
