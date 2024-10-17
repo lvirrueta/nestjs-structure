@@ -52,7 +52,7 @@ export class AuthService {
   public async signUp(dto: SignUpDto): Promise<IAccessToken> {
     const { password, username } = dto;
 
-    const user = await this.userCustomerService.createUser({ password, username, id: undefined });
+    const user = await this.userCustomerService.createUser({ password, username, entType: undefined });
 
     return await this.generateJwtToken(user.id);
   }
