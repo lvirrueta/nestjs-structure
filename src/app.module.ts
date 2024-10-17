@@ -8,7 +8,10 @@ import { SharedModule } from './shared/shared.module';
 import { SettingsModule } from './settings/settings.module';
 
 // Guards
+import { RolesGuard } from '@auth/app/guards/roles.guard';
 import { JwtAuthGuard } from '@auth/app/guards/jwt.auth.guard';
+
+// Filter
 import { HttpExceptionFilter } from '@shared/app/exception/http-exception.filter';
 
 @Module({
@@ -18,6 +21,10 @@ import { HttpExceptionFilter } from '@shared/app/exception/http-exception.filter
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     {
       provide: APP_FILTER,
