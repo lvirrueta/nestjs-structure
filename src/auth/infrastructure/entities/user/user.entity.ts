@@ -5,7 +5,7 @@ import { UserTypeEnum } from '@auth/domain/enum/user.enum';
 
 @Entity({ name: 'tblUsers' })
 @TableInheritance({
-  column: { type: 'enum', enum: UserTypeEnum, enumName: 'User_entType', name: 'User_entType' },
+  column: 'entType',
 })
 export abstract class UserEntity implements IUser {
   constructor(dto?: IUser) {
@@ -22,4 +22,7 @@ export abstract class UserEntity implements IUser {
 
   @Column({ name: 'User_strPassword' })
   password: string;
+
+  @Column({ name: 'User_entType', enumName: 'UserTypeEnum', type: 'enum', enum: UserTypeEnum, nullable: false })
+  entType: UserTypeEnum;
 }
