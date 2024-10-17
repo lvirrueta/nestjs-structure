@@ -13,6 +13,10 @@ import { IUserRepository } from '@auth/domain/irepositories/user.repository.inte
 import { IJwtPayload } from '@auth/domain/interface/i-jwt-payload';
 import { IUserStrategy } from '@auth/domain/interface/i-user.strategy';
 
+// Constants
+import { ThrowError } from '@shared/app/utils/throw-error';
+import { Errors } from '@shared/app/error/error.constants';
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(@Inject(UserRepository) public readonly userRepository: IUserRepository) {
@@ -32,11 +36,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (!user) {
       this.logger.error('valid token, but user does not exists on db');
+      ThrowError.httpException(Errors.Auth.TokenOkButUserNoExist);
     }
 
     const userStrategy: IUserStrategy = {
       id: user.id,
       username: user.username,
+      type: user.entType,
     };
 
     this.logger.log('validation successful');
