@@ -19,6 +19,7 @@ import {
   UserCustomerRepository,
   UserOperativeRepository,
 } from './infrastructure/repositories/user.repository';
+import { UserGroupRepository } from './infrastructure/repositories/user-group.repository';
 
 // Strategies
 import { JwtStrategy } from './app/strategies/jwt-strategy';
@@ -53,6 +54,7 @@ import { JwtStrategy } from './app/strategies/jwt-strategy';
     UserAdminRepository,
     UserCustomerRepository,
     UserOperativeRepository,
+    UserGroupRepository,
   ],
   exports: [JwtStrategy, JwtModule],
 })
