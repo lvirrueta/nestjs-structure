@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ID } from 'src/shared/app/types/types.types';
-import { IGenericRepository } from 'src/shared/domain/irepositories/i-generic-repository.interface';
-import { Repository, DataSource, EntityTarget, QueryRunner, FindManyOptions } from 'typeorm';
-import { RepositoryOptions } from '../interface/options-generic.interface';
 import { NotFoundException } from '@nestjs/common';
+import { Repository, DataSource, EntityTarget, QueryRunner, FindManyOptions } from 'typeorm';
+
+// Interface
+import { IGenericRepository } from 'src/shared/domain/irepositories/i-generic-repository.interface';
+import { RepositoryOptions } from '../interface/options-generic.interface';
+
+// Constants
+import { ThrowError } from '@shared/app/utils/throw-error';
+import { Errors } from '@shared/app/error/error.constants';
 
 export abstract class GenericRepository<E> extends Repository<E> implements IGenericRepository<E> {
   constructor(
@@ -61,11 +67,16 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
 
     const repository = this.getSimpleOrTransaction(queryRunner);
 
-    const entityF = await repository.findOne({ where: { id: entity['id'] } as any });
-    // if (!entityF) ThrowError.httpException(Errors.GenericRepository.UpdateEntity);
-
     try {
-      return await repository.save(entity);
+      const res = await repository
+        .createQueryBuilder()
+        .update(this.create() as any)
+        .set(entity as any)
+        .where('id = :id', { id: entity['id'] })
+        .execute();
+
+      if (!res.affected) ThrowError.httpException(Errors.GenericRepository.UpdateEntity);
+      return entity;
     } catch (e) {
       if (!handleError) throw e;
       this.catchExceptions(e);
