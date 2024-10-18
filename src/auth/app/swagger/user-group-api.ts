@@ -11,6 +11,9 @@ export class UserGroupApi implements IUserGroup {
   @ApiProperty({ example: 'admin' })
   name: string;
 
+  @ApiProperty({ example: 'admin' })
+  description: string;
+
   @ApiProperty({ enum: UserGroupEnum })
   scope: UserGroupEnum;
 }

@@ -11,6 +11,9 @@ export class UserGroupEntity implements IUserGroup {
   @Column({ name: 'UserGroup_strName', unique: true })
   name: string;
 
+  @Column({ name: 'UserGroup_strDescription', unique: true })
+  description: string;
+
   @Column({ name: 'UserGroupEnum', enumName: 'UserGroupEnum', type: 'enum', enum: UserGroupEnum })
   scope: UserGroupEnum;
 }

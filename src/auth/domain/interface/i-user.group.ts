@@ -4,5 +4,6 @@ import { UserGroupEnum } from '../enum/user-group.enum';
 export interface IUserGroup {
   id: ID;
   name: string;
+  description: string;
   scope: UserGroupEnum;
 }

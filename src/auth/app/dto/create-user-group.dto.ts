@@ -13,6 +13,10 @@ export class CreateUserGroupDto implements IUserGroupOmit {
   @IsString()
   name: string;
 
+  @ApiProperty({ description: 'description of the user', example: 'admin' })
+  @IsString()
+  description: string;
+
   @ApiProperty({ description: 'Tipo de usuario', example: UserGroupEnum.ADMIN, enum: UserGroupEnum })
   @IsEnum(UserGroupEnum)
   scope: UserGroupEnum;
