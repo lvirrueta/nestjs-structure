@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Repository, DataSource, EntityTarget, QueryRunner, FindManyOptions } from 'typeorm';
 
 // Interface
-import { IGenericRepository } from 'src/shared/domain/irepositories/i-generic-repository.interface';
+import { IGenericRepository, TransactionGenericOptions } from 'src/shared/domain/irepositories/i-generic-repository.interface';
 import { RepositoryOptions } from '../interface/options-generic.interface';
 
 // Constants
@@ -129,22 +129,20 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     return transaction;
   }
 
-  public async startTransaction(
-    commitCallback: (transaction: QueryRunner) => void,
-    rollbackCallback: (transaction: QueryRunner) => void,
-    releaseCallback: () => void,
-  ): Promise<void> {
+  public async startTransaction(options: TransactionGenericOptions): Promise<void> {
+    const { commit, release, rollback } = options;
     const transaction = await this.createAndStartTransaction();
     await transaction.connect();
     await transaction.startTransaction();
     try {
-      commitCallback(transaction);
+      await commit(transaction);
       await transaction.commitTransaction();
     } catch (error) {
-      rollbackCallback(transaction);
       await transaction.rollbackTransaction();
+      await rollback?.(error);
+      throw error;
     } finally {
-      releaseCallback();
+      release?.();
       await transaction.release();
     }
   }

@@ -20,9 +20,11 @@ export interface IGenericRepository<E = any> {
   commitTransaction(query: QueryRunner): Promise<void>;
   rollbackTransaction(query: QueryRunner): Promise<void>;
   releaseTransaction(query: QueryRunner): Promise<void>;
-  startTransaction(
-    commitCallback: (transaction: QueryRunner) => void,
-    rollbackCallback: (transaction: QueryRunner) => void,
-    releaseCallback: () => void,
-  ): Promise<void>;
+  startTransaction(options: TransactionGenericOptions): Promise<void>;
+}
+
+export interface TransactionGenericOptions {
+  commit: (queryRunner: QueryRunner) => Promise<void>;
+  rollback?: (e) => Promise<void>;
+  release?: () => void;
 }
