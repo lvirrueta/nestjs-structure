@@ -1,6 +1,7 @@
 import { UserTypeEnum } from '@auth/domain/enum/user.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { ID } from '@shared/app/types/types.types';
+import { IsEnum, IsString, IsUUID } from 'class-validator';
 import { IUser } from 'src/auth/domain/interface/i-user';
 
 /** Keys To Omit */
@@ -19,4 +20,8 @@ export class CreateUserDto implements IUserOmit {
   @ApiProperty({ description: 'Tipo de usuario', example: UserTypeEnum.ADMIN, enum: UserTypeEnum })
   @IsEnum(UserTypeEnum)
   entType: UserTypeEnum;
+
+  @ApiProperty({ description: 'id of the userGroup', example: '6870267c-3f9e-42d1-a514-26caf0967686' })
+  @IsUUID()
+  userGroupId: ID;
 }
