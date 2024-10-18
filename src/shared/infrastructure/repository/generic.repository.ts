@@ -19,13 +19,15 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     super(target, dataSource.createEntityManager());
   }
 
+  abstract relations(): (object: E) => any;
+
   /** list Entities */
   public async listEntities(opt?: FindManyOptions<E>, query?: QueryRunner): Promise<E[]> {
     const { where } = { ...opt };
 
     const repository = this.getSimpleOrTransaction(query);
 
-    return await repository.find({ where });
+    return await repository.find({ where, relations: this.getRelations });
   }
 
   /** list Entities and Count */
@@ -178,5 +180,16 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
         throw error;
         break;
     }
+  }
+
+  private get getRelations() {
+    return this.relations()
+      .toString()
+      .split('=>')[1]
+      .trim()
+      .replace('[', '')
+      .replace(']', '')
+      .split(',')
+      .map((r) => r.slice(r.indexOf('.')).replace('.', ''));
   }
 }

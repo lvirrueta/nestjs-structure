@@ -16,4 +16,8 @@ export class UserGroupRepository extends GenericRepository<UserGroupEntity> impl
   constructor(public readonly dataSource: DataSource) {
     super(UserGroupEntity, dataSource);
   }
+
+  relations(): (object: UserGroupEntity) => any {
+    return () => [];
+  }
 }

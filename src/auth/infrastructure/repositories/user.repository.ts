@@ -16,6 +16,10 @@ import { UserOperativeEntity } from '@auth/infrastructure/entities/user/user-ope
 
 // @Injectable()
 export abstract class UserAbstractRepository<E extends UserEntity> extends GenericRepository<E> implements IUserAbstractRepository<E> {
+  relations(): (object: UserEntity) => any {
+    return (r) => [r.userGroup];
+  }
+
   public async findByUsername(username: string): Promise<E> {
     return await this.findOne({ where: { username } as any });
   }
