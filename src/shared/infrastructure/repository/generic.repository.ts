@@ -183,7 +183,7 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
   }
 
   private get getRelations() {
-    return this.relations()
+    const relations = this.relations()
       .toString()
       .split('=>')[1]
       .trim()
@@ -191,5 +191,8 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
       .replace(']', '')
       .split(',')
       .map((r) => r.slice(r.indexOf('.')).replace('.', ''));
+
+    if (!relations[0].length) return;
+    return relations;
   }
 }
