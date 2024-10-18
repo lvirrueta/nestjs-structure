@@ -129,6 +129,26 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     return transaction;
   }
 
+  public async startTransaction(
+    commitCallback: (transaction: QueryRunner) => void,
+    rollbackCallback: (transaction: QueryRunner) => void,
+    releaseCallback: () => void,
+  ): Promise<void> {
+    const transaction = await this.createAndStartTransaction();
+    await transaction.connect();
+    await transaction.startTransaction();
+    try {
+      commitCallback(transaction);
+      await transaction.commitTransaction();
+    } catch (error) {
+      rollbackCallback(transaction);
+      await transaction.rollbackTransaction();
+    } finally {
+      releaseCallback();
+      await transaction.release();
+    }
+  }
+
   /** commit transaction */
   public async commitTransaction(query: QueryRunner): Promise<void> {
     return await query.commitTransaction();
