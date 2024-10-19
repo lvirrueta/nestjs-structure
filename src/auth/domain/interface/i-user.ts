@@ -7,6 +7,6 @@ export interface IUser {
   username: string;
   password: string;
   entType: UserTypeEnum;
-  userGroupId: ID;
+  userGroupId?: ID;
   userGroup?: IUserGroup;
 }

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IUser } from '@auth/domain/interface/i-user';
 import { UserTypeEnum } from '@auth/domain/enum/user.enum';
 import { ID } from '@shared/app/types/types.types';
@@ -16,6 +16,6 @@ export class UserApi implements IUserOmit {
   @ApiProperty({ enum: UserTypeEnum })
   entType: UserTypeEnum;
 
-  @ApiProperty({ example: 'c6f3da78-bb09-45c9-8350-d3ea987fb2b6' })
-  userGroupId: ID;
+  @ApiPropertyOptional({ example: 'c6f3da78-bb09-45c9-8350-d3ea987fb2b6' })
+  userGroupId?: ID;
 }

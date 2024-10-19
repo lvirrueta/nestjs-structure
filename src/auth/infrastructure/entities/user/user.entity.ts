@@ -27,7 +27,7 @@ export abstract class UserEntity implements IUser {
   entType: UserTypeEnum;
 
   @Column({ name: 'UserGroup_uuid', type: 'varchar', nullable: true })
-  userGroupId: ID;
+  userGroupId?: ID;
 
   @ManyToOne(() => UserGroupEntity)
   @JoinColumn({ name: 'UserGroup_uuid' })
