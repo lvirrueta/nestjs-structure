@@ -7,11 +7,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // Controllers
 import { AuthController } from './app/controller/auth.controller';
 import { UserController } from './app/controller/user.controller';
-import { UserGroupController } from './app/controller/user-group.controller';
 
 // Services
 import { AuthService } from './domain/service/auth.service';
-import { UserGroupService } from './domain/service/user-group.service';
 import { UserAdminService, UserCustomerService, UserOperativeService, UserService } from './domain/service/user.service';
 
 // Repositories
@@ -21,7 +19,6 @@ import {
   UserCustomerRepository,
   UserOperativeRepository,
 } from './infrastructure/repositories/user.repository';
-import { UserGroupRepository } from './infrastructure/repositories/user-group.repository';
 
 // Strategies
 import { JwtStrategy } from './app/strategies/jwt-strategy';
@@ -39,7 +36,7 @@ import { JwtStrategy } from './app/strategies/jwt-strategy';
       },
     }),
   ],
-  controllers: [AuthController, UserController, UserGroupController],
+  controllers: [AuthController, UserController],
   providers: [
     // Providers
     JwtStrategy,
@@ -48,7 +45,6 @@ import { JwtStrategy } from './app/strategies/jwt-strategy';
     AuthService,
     UserService,
     UserAdminService,
-    UserGroupService,
     UserCustomerService,
     UserOperativeService,
 
@@ -57,7 +53,6 @@ import { JwtStrategy } from './app/strategies/jwt-strategy';
     UserAdminRepository,
     UserCustomerRepository,
     UserOperativeRepository,
-    UserGroupRepository,
   ],
   exports: [JwtStrategy, JwtModule],
 })
