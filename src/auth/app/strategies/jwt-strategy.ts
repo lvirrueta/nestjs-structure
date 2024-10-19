@@ -11,11 +11,11 @@ import { IUserRepository } from '@auth/domain/irepositories/user.repository.inte
 
 // Interface
 import { IJwtPayload } from '@auth/domain/interface/i-jwt-payload';
-import { IUserStrategy } from '@auth/domain/interface/i-user.strategy';
 
 // Constants
 import { ThrowError } from '@shared/app/utils/throw-error';
 import { Errors } from '@shared/app/error/error.constants';
+import { UserStrategy } from '@auth/domain/model/user-strategy';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -28,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   public logger = new Logger(this.constructor.name);
 
-  async validate(payload: IJwtPayload): Promise<IUserStrategy> {
+  async validate(payload: IJwtPayload): Promise<UserStrategy> {
     this.logger.log('validating...');
     const { userID } = payload;
 
@@ -39,11 +39,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ThrowError.httpException(Errors.Auth.TokenOkButUserNoExist);
     }
 
-    const userStrategy: IUserStrategy = {
+    const userStrategy = new UserStrategy({
       id: user.id,
       username: user.username,
-      type: user.entType,
-    };
+      entType: user.entType,
+      level: user.level,
+    });
 
     this.logger.log('validation successful');
     this.logger.log('user strategy ->', userStrategy);
