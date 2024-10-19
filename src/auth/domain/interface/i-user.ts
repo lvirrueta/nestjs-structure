@@ -6,4 +6,5 @@ export interface IUser {
   username: string;
   password: string;
   entType: UserTypeEnum;
+  level: number;
 }

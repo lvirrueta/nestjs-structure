@@ -25,4 +25,7 @@ export class CreateUserDto implements IUserOmit {
   @IsUUID()
   @IsOptional()
   userGroupId?: ID;
+
+  @ApiProperty({ description: 'Nivel del usuario', example: '0' })
+  level: number;
 }

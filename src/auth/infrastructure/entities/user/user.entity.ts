@@ -24,4 +24,7 @@ export abstract class UserEntity implements IUser {
 
   @Column({ name: 'User_entType', enumName: 'UserTypeEnum', type: 'enum', enum: UserTypeEnum, nullable: false })
   entType: UserTypeEnum;
+
+  @Column({ name: 'User_intLevel', nullable: false })
+  level: number;
 }
