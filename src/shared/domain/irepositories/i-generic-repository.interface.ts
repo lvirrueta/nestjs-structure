@@ -20,7 +20,7 @@ export interface IGenericRepository<E = any> {
   commitTransaction(query: QueryRunner): Promise<void>;
   rollbackTransaction(query: QueryRunner): Promise<void>;
   releaseTransaction(query: QueryRunner): Promise<void>;
-  startTransaction(options: TransactionGenericOptions): Promise<void>;
+  executeTransaction(options: TransactionGenericOptions): Promise<void>;
 }
 
 export interface TransactionGenericOptions {
