@@ -21,7 +21,7 @@ import { ApiJsonResponse } from '@shared/app/decorator/api-response.decorator';
 
 // Types
 import { UUID } from '@shared/app/types/types.types';
-import { UserTypeEnum } from '@auth/domain/enum/user.enum';
+import { UserGroupEnum } from '@auth/domain/enum/user-group.enum';
 
 // Constants
 import { Routes } from '@shared/app/routes/routes.constants';
@@ -33,7 +33,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(Routes.User.List)
-  @Roles([UserTypeEnum.ADMIN])
+  @Roles([UserGroupEnum.ADMIN])
   @ApiJsonResponse({ status: HttpStatus.OK, type: [UserApi] })
   @ApiOperation({ summary: 'View all users registered in the application', description: 'all users registered in the app' })
   async getAll(): Promise<JsonResponse<UserApi[]>> {
@@ -42,7 +42,7 @@ export class UserController {
   }
 
   @Get(Routes.User.Detail)
-  @Roles([UserTypeEnum.ADMIN])
+  @Roles([UserGroupEnum.ADMIN])
   @ApiJsonResponse({ status: HttpStatus.OK, type: UserApi })
   @ApiOperation({ summary: 'get the detail of the user', description: 'get the detail of the user' })
   async detail(@Param('id') id: UUID): Promise<JsonResponse<UserApi>> {
@@ -51,7 +51,7 @@ export class UserController {
   }
 
   @Post(Routes.User.Create)
-  @Roles([UserTypeEnum.ADMIN])
+  @Roles([UserGroupEnum.ADMIN])
   @ApiJsonResponse({ status: HttpStatus.OK, type: UserApi })
   @ApiOperation({ summary: 'Create any user', description: 'Create any user' })
   async create(@Body() dto: CreateUserDto): Promise<JsonResponse<UserApi>> {
@@ -60,7 +60,7 @@ export class UserController {
   }
 
   @Put(Routes.User.Update)
-  @Roles([UserTypeEnum.ADMIN])
+  @Roles([UserGroupEnum.ADMIN])
   @ApiJsonResponse({ status: HttpStatus.OK, type: UserApi })
   @ApiOperation({ summary: 'Update any user', description: 'Update any user' })
   async update(@Body() dto: UpdateUserDto): Promise<JsonResponse<UserApi>> {
@@ -69,7 +69,7 @@ export class UserController {
   }
 
   @Delete(Routes.User.Delete)
-  @Roles([UserTypeEnum.ADMIN])
+  @Roles([UserGroupEnum.ADMIN])
   @ApiJsonResponse({ status: HttpStatus.OK, type: UserApi })
   @ApiOperation({ summary: 'delete user', description: 'delete user' })
   async delete(@Param('id') id: UUID): Promise<JsonResponse<UserApi>> {
