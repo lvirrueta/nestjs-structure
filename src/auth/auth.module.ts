@@ -22,6 +22,7 @@ import {
 
 // Strategies
 import { JwtStrategy } from './app/strategies/jwt-strategy';
+import { GoogleStrategy } from './app/strategies/google-oauth-strategy';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { JwtStrategy } from './app/strategies/jwt-strategy';
   providers: [
     // Providers
     JwtStrategy,
+    GoogleStrategy,
 
     // Services
     AuthService,

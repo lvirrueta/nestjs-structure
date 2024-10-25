@@ -1,5 +1,5 @@
 // Dependencies
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 // Service
@@ -22,6 +22,7 @@ import { ApiJsonResponse } from '@shared/app/decorator/api-response.decorator';
 
 // Constants
 import { Routes } from '@shared/app/routes/routes.constants';
+import { GoogleOauthGuard } from '../guards/google.auth.guard';
 
 @ApiExtraModels(AccessTokenApi)
 @ApiTags(Routes.Auth.ApiTags)
@@ -45,5 +46,20 @@ export class AuthController {
   async signIn(@Body() dto: SignInDto): Promise<JsonResponse<UserApi>> {
     const data = await this.authService.signIn(dto);
     return new JsonResponse<UserApi>({ data });
+  }
+
+  @Public()
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  // @ApiJsonResponse({ status: HttpStatus.OK, type: AccessTokenApi })
+  // @ApiOperation({ summary: 'Login to the application', description: 'return an access token & refresh token' })
+  async googleAuth() {}
+
+  @Public()
+  @Get('google-oauth-redirect')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthCallback(@Req() req) {
+    console.log(req.user);
+    return '';
   }
 }
