@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ID } from 'src/shared/app/types/types.types';
-import { IGenericRepository } from 'src/shared/domain/irepositories/i-generic-repository.interface';
-import { Repository, DataSource, EntityTarget, QueryRunner, FindManyOptions } from 'typeorm';
-import { RepositoryOptions } from '../interface/options-generic.interface';
 import { NotFoundException } from '@nestjs/common';
+import { Repository, DataSource, EntityTarget, QueryRunner, FindManyOptions } from 'typeorm';
+
+// Interface
+import { IGenericRepository, TransactionGenericOptions } from 'src/shared/domain/irepositories/i-generic-repository.interface';
+import { RepositoryOptions } from '../interface/options-generic.interface';
+
+// Constants
+import { ThrowError } from '@shared/app/utils/throw-error';
+import { Errors } from '@shared/app/error/error.constants';
 
 export abstract class GenericRepository<E> extends Repository<E> implements IGenericRepository<E> {
   constructor(
@@ -13,13 +19,15 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     super(target, dataSource.createEntityManager());
   }
 
+  abstract relations(): (object: E) => any;
+
   /** list Entities */
   public async listEntities(opt?: FindManyOptions<E>, query?: QueryRunner): Promise<E[]> {
     const { where } = { ...opt };
 
     const repository = this.getSimpleOrTransaction(query);
 
-    return await repository.find({ where });
+    return await repository.find({ where, relations: this.getRelations });
   }
 
   /** list Entities and Count */
@@ -35,6 +43,10 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     where = { ...where, id } as any;
 
     return await repository.findOne({ where });
+  }
+
+  instanceEntity(e: E): E {
+    return this.create(e);
   }
 
   /** save Entity */
@@ -57,11 +69,16 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
 
     const repository = this.getSimpleOrTransaction(queryRunner);
 
-    const entityF = await repository.findOne({ where: { id: entity['id'] } as any });
-    // if (!entityF) ThrowError.httpException(Errors.GenericRepository.UpdateEntity);
-
     try {
-      return await repository.save(entity);
+      const res = await repository
+        .createQueryBuilder()
+        .update(this.create() as any)
+        .set(entity as any)
+        .where('id = :id', { id: entity['id'] })
+        .execute();
+
+      if (!res.affected) ThrowError.httpException(Errors.GenericRepository.UpdateEntity);
+      return entity;
     } catch (e) {
       if (!handleError) throw e;
       this.catchExceptions(e);
@@ -110,6 +127,36 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
     await transaction.startTransaction();
 
     return transaction;
+  }
+
+  /** Execute transaction
+   * @example await this.userRepository.startTransaction({
+      commit: async (queryRunner) => {
+        newUser = await this.userRepository.saveEntity(user, { queryRunner, handleError: false });
+        await this.userRepository.commitTransaction(queryRunner);
+      },
+      rollback: (e) => {
+        if (e?.code === '23505') {
+          ThrowError.httpException(Errors.Auth.UserRegistered);
+        }
+        throw e;
+      },
+    });
+
+   */
+  public async executeTransaction(options: TransactionGenericOptions): Promise<void> {
+    const { commit, release, rollback } = options;
+    const transaction = await this.createAndStartTransaction();
+    try {
+      await commit(transaction);
+    } catch (error) {
+      await transaction.rollbackTransaction();
+      await rollback?.(error);
+      throw error;
+    } finally {
+      release?.();
+      await transaction.release();
+    }
   }
 
   /** commit transaction */
@@ -163,5 +210,19 @@ export abstract class GenericRepository<E> extends Repository<E> implements IGen
         throw error;
         break;
     }
+  }
+
+  private get getRelations() {
+    const relations = this.relations()
+      .toString()
+      .split('=>')[1]
+      .trim()
+      .replace('[', '')
+      .replace(']', '')
+      .split(',')
+      .map((r) => r.slice(r.indexOf('.')).replace('.', ''));
+
+    if (!relations[0].length) return;
+    return relations;
   }
 }

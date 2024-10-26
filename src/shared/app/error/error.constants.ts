@@ -15,6 +15,13 @@ export const Errors = {
       statusCode: HttpStatus.CONFLICT,
       errorCode: 'AUUR-02',
     },
+
+    /** description: This user is already registered */
+    TokenOkButUserNoExist: {
+      message: 'Token no valido',
+      statusCode: HttpStatus.FORBIDDEN,
+      errorCode: 'AUUR-03',
+    },
   },
 
   GenericRepository: {

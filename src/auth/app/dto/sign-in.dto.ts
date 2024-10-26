@@ -1,12 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IUser } from 'src/auth/domain/interface/i-user';
+import { SignUpDto } from './sign-up.dto';
 
-export class SignInDto implements IUser {
-  @ApiProperty({ description: 'username of the user', example: 'admin' })
-  // @IsString()
-  username: string;
-
-  @ApiProperty({ description: 'password of user', example: 'admin1234' })
-  // @IsString()
-  password: string;
-}
+export class SignInDto extends SignUpDto {}

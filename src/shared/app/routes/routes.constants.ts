@@ -1,7 +1,7 @@
 // const Search = 'search';
 const List = 'get';
 const Detail = 'detail/:id';
-// const Create = 'create';
+const Create = 'create';
 const Update = 'update';
 const Delete = 'delete/:id';
 
@@ -24,7 +24,18 @@ export const Routes = {
     List,
     // Search,
     Detail,
-    // Create,
+    Create,
+    Update,
+    Delete,
+  },
+
+  UserGroup: {
+    ApiTags: `UserGroup`,
+    Controller: `user-group`,
+    List,
+    // Search,
+    Detail,
+    Create,
     Update,
     Delete,
   },
