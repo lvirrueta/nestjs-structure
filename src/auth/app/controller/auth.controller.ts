@@ -49,6 +49,15 @@ export class AuthController {
   }
 
   @Public()
+  @Post(Routes.Auth.signInSwagger)
+  @ApiJsonResponse({ status: HttpStatus.OK, type: AccessTokenApi })
+  @ApiOperation({ summary: 'Login to the application by Swagger', description: 'returns only the access token' })
+  async signInSwagger(@Body() dto: SignInDto): Promise<string> {
+    const data = await this.authService.signIn(dto);
+    return data.accessToken;
+  }
+
+  @Public()
   @Get('google')
   @UseGuards(GoogleOauthGuard)
   // @ApiJsonResponse({ status: HttpStatus.OK, type: AccessTokenApi })

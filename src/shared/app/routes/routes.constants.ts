@@ -16,6 +16,7 @@ export const Routes = {
     // Delete,
     signUp: `sign-up`,
     signIn: `sign-in`,
+    signInSwagger: `sign-in-swagger`,
   },
 
   User: {
