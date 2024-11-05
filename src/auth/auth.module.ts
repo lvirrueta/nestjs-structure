@@ -41,7 +41,7 @@ import { GoogleStrategy } from './app/strategies/google-oauth-strategy';
   providers: [
     // Providers
     JwtStrategy,
-    GoogleStrategy,
+    // GoogleStrategy,
 
     // Services
     AuthService,
